@@ -1,19 +1,31 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import ReactDOM from 'react-dom/client';
+import {Provider, useDispatch} from "react-redux";
+import {RouterProvider} from "react-router-dom";
+
+import {store} from "./store/store";
+import {router} from "./router";
+import {authActions} from "./store/slices";
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+    document.getElementById('root') as HTMLElement);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+const AppWithAuthCheck = () => {
+    const dispatch = useDispatch();
+    useEffect(() => {
+        const token = localStorage.getItem('accessToken');
+        if (token) {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            dispatch(authActions.loginSuccess({ user, token }));
+        }
+    }, [dispatch]);
+    return <RouterProvider router={router} />;
+};
+
+root.render(
+    <Provider store={store}>
+        <AppWithAuthCheck />
+    </Provider>
+);
