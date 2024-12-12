@@ -24,10 +24,11 @@ const Auth: React.FC<AuthProps> = () => {
                 { email, password },
                 { withCredentials: true }
             );
+            console.log('Server response:', response.data);
             if (response.data.tokens && response.data.tokens.accessToken) {
                 localStorage.setItem('accessToken', response.data.tokens.accessToken);
                 dispatch(authActions.loginSuccess({user: response.data.user}));
-                navigate('/orders');
+                navigate('/orders', { replace: true });
             } else {
                 console.error('Invalid email or password');
             }

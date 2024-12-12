@@ -13,6 +13,7 @@
     display: flex;
     column-gap: 20px;
     margin-top: 10px;
+    cursor: pointer;
 }
 td, th, table, tbody {
     padding: 0;
@@ -29,7 +30,6 @@ td, th, table, tbody {
     flex-direction: column;
     padding: 0;
 }
-
 .filtersOrder th:nth-child(2),.filtersOrder th:nth-child(3),.filtersOrder th:nth-child(5),.filtersOrder th:nth-child(6),.filtersOrder th:nth-child(7),.filtersOrder th:nth-child(8),.filtersOrder th:nth-child(9),
 .filtersOrder th:nth-child(10),.filtersOrder th:nth-child(11),.filtersOrder th:nth-child(12),.filtersOrder th:nth-child(13),.filtersOrder th:nth-child(14), .filtersOrder th:nth-child(15){
     width: 7%;
@@ -69,64 +69,15 @@ td, th, table, tbody {
     border-collapse: collapse;
     justify-content: space-around;
     margin-top: 20px;
-
+    cursor: pointer;
 }
 .resetButton {
     height: 40px;
     width: 50px;
 }
-.clickableRow td:nth-child(1) {
-    width: 3%;
-    height: 30px;
-    min-width: 35px;
-    border-collapse: collapse;
-    border: 1px solid purple;
-    font-size: 13px;
-    background-color: #ff33cc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-}
-.Order td:nth-child(2),.Order td:nth-child(3),.Order td:nth-child(5),.Order td:nth-child(6),.Order td:nth-child(7),.Order td:nth-child(8),.Order td:nth-child(9),
-.Order td:nth-child(10),.Order td:nth-child(11),.Order td:nth-child(12),.Order td:nth-child(13),.Order td:nth-child(14),.Order td:nth-child(15) {
-    width: 7%;
-    height: 30px;
-    min-width: 84.5px;
-    border-collapse: collapse;
-    border: 1px solid purple;
-    font-size: 13px;
-    font-weight: bold;
-    background-color: #ff33cc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-
-}
-table {
-    width: 100%;
-    height: 100%;
-}
-.Order td:nth-child(4) {
-    width: 12%;
-    height: 30px;
-    border-collapse: collapse;
-    border: 1px solid purple;
-    background-color: #ff33cc;
-    font-size: 12px;
-    font-weight: bold;
-    min-width: 270px;
-    max-width: 400px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-}
 .filtersearchByName , .filtersearchBySurname , .filtersearchByEmail , .filtersearchByPhone ,.filtersearchByAge   {
     width: 20%;
     height: 40px;
-
     display: flex;
 }
 .filtersearchByName input, .filtersearchBySurname input, .filtersearchByEmail input, .filtersearchByPhone input,.filtersearchByAge input  {
@@ -135,16 +86,6 @@ table {
 
     display: flex;
 }
-
-.Order {
-    display: flex;
-    table-layout: fixed;
-    width: 100%;
-    border-collapse: collapse;
-    flex-direction: column;
-    justify-content: space-around;
-}
-
 .zxc {
     display: flex;
     table-layout: fixed;
@@ -156,13 +97,14 @@ table {
 tr {
     display: flex;
     width: 100%;
-
 }
 .filters1, .filters2, .filters3, .filters4, .filters5, .filters6, .filters7, .filters8, .filters9, .filters10,  .filters12 {
     width: 30%;
     height: 50px;
     background-color: darkslategray;
     display: flex;
+    cursor: pointer;
+
 }
 .filters11 {
     width: 10%;
@@ -175,8 +117,20 @@ tr {
 .filters7, .filters8, .filters9, .filters10 {
     position: relative;
     display: inline-block;
-}
 
+}
+.filters7 button, .filters8 button, .filters9 button, .filters10 button {
+    font-size: 18px;
+}
+.filters11 button {
+    width: 100px;
+    height: 50px;
+    font-size: 17px;
+}
+.filters11 button:hover {
+    background-color: #957c8e;
+    cursor: pointer;
+}
 .dropdownContent {
     margin-top: 10px;
     background-color: white;
@@ -199,10 +153,15 @@ tr {
 .filters7 button, .filters8 button, .filters9 button, .filters10 button {
     width: 100%;
     height: 100%;
+    cursor: pointer;
+}
+.filters7 button:hover, .filters8 button:hover, .filters9 button:hover, .filters10 button:hover {
+    background-color: #957c8e;
 }
 .filters1 input, .filters2 input, .filters3 input, .filters4 input, .filters5 input, .filters6 input, .filters11 input, .filters12 input {
     width: 100%;
     height: 85%;
+
 }
 .sortButton {
     width: 100%;
@@ -215,78 +174,18 @@ tr {
     justify-content: center;
     align-items: center;
 }
-.expandedRow {
-    display: flex;
-    height: 200px;
-    align-items: center;
-    background-color: #df7fc8;
-
-}
-.qwe {
-    height: 100%;
-    display: flex;
-    background-color: #df7fc8;
-    flex-direction: column;
-}
-.clickableRow {
-    display: flex;
-    justify-content: flex-start;
+.pag button {
+    height: 35px;
+    width: 45px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-
+    font-size: 18px;
 }
-.clickableRow:hover th {
-    background-color: #0056b3;
-
+.pag button.activePage {
+    background-color: #957c8e;
 }
-.modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.pag button:hover {
+    background-color: #957c8e;
 }
 
-.modalContent {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    width: 80%;
-    max-width: 500px;
-    z-index: 1010;
-    position: relative;
-}
 
-.closeButton {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-}
-.OrdersUpdate {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 400px;
-}
-.OrdersUpdate form {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    height: 350px;
-    row-gap: 10px;
-    column-gap: 10px;
-}
-.OrdersUpdate input {
-    width: 200px;
-}
+

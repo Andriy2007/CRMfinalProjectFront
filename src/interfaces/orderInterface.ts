@@ -1,5 +1,6 @@
 export interface IOrders {
     page: number,
+    total: number;
     "total_pages": number,
     "total_results": number
     results: IOrder[],
@@ -19,8 +20,13 @@ export interface IOrder {
     phone: number;
     alreadyPaid: string;
     group: string;
+    comment?: {
+        text: string;
+        author: string;
+        date: string; };
     created_at: string;
     manager: string;
     msg: string;
     utm: string;
+    user_id: string;
 }

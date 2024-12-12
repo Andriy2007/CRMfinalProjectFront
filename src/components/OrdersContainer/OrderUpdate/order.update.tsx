@@ -5,7 +5,7 @@ import { AppDispatch } from '../../../store/store';
 import {groupActions, orderActions} from "../../../store/slices";
 import {RootState} from "../../../types/reduxType";
 import {IGroup, IOrder} from "../../../interfaces";
-import css from "../Orders/orders.module.css";
+import css from "../OrderUpdate/orderUpdate.module.css";
 
 
 interface UpdateOrderProps {
@@ -35,6 +35,7 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
         manager: '',
         msg: '',
         utm: '',
+        user_id: ''
 
     });
 
@@ -88,30 +89,98 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
         <div className={css.OrdersUpdate}>
             <h3>Update Order</h3>
             <form>
-                <input type="text" name="name" value={formData.name || ''} onChange={handleChange} placeholder="Name"/>
-                <input type="text" name="surname" value={formData.surname || ''} onChange={handleChange} placeholder="Surname"/>
-                <input type="email" name="email" value={formData.email || ''} onChange={handleChange} placeholder="Email"/>
-                <input type="text" name="age" value={formData.age || ''} onChange={handleChange} placeholder="age"/>
-                <input type="text" name="course" value={formData.course || ''} onChange={handleChange} placeholder="course"/>
-                <input type="text" name="course_format" value={formData.course_format || ''} onChange={handleChange} placeholder="course_format"/>
-                <input type="text" name="course_type" value={formData.course_type || ''} onChange={handleChange} placeholder="course_type"/>
-                <input type="text" name="status" value={formData.status || ''} onChange={handleChange} placeholder="status"/>
-                <input type="text" name="sum" value={formData.sum || ''} onChange={handleChange} placeholder="sum"/>
-                <input type="text" name="phone" value={formData.phone || ''} onChange={handleChange} placeholder="Phone"/>
-                <select name="group" value={formData.group || ''} onChange={handleChange}><option value="">Select a group</option>
-                    {groups.map((group: IGroup) => (<option key={group._id} value={group.name}>{group.name}</option>))}
-                </select>
-                <div><input type="text" placeholder="New group" value={newGroup} onChange={(e) => setNewGroup(e.target.value)}/>
-                    <button type="button" onClick={handleAddGroup}>Add a group</button>
+                <div className={css.OrdersUpdateA}>
+                    <p>name:</p>
+                    <input type="text" name="name" value={formData.name || ''} onChange={handleChange}
+                           placeholder="Name"/>
                 </div>
-                <input type="text" name="created_at" value={formData.created_at || ''} onChange={handleChange} placeholder="created_at"/>
-                <input type="text" name="manager" value={formData.manager || ''} onChange={handleChange} placeholder="manager"/>
-                <input type="text" name="msg" value={formData.msg || ''} onChange={handleChange} placeholder="msg"/>
-                <input type="text" name="utm" value={formData.utm || ''} onChange={handleChange} placeholder="utm"/>
-                <button type="button" onClick={handleSave}>Save</button>
-                <button type="button" onClick={closeModal}>Cancel</button>
+                <div className={css.OrdersUpdateA}>
+                    <p>surname:</p>
+                    <input type="text" name="surname" value={formData.surname || ''} onChange={handleChange}
+                           placeholder="Surname"/>
+                </div>
+                <div className={css.OrdersUpdateA}>
+                    <p>email:</p>
+                    <input type="email" name="email" value={formData.email || ''} onChange={handleChange}
+                           placeholder="Email"/>
+                </div>
+                <div className={css.OrdersUpdateA}>
+                    <p>age:</p>
+                    <input type="text" name="age" value={formData.age || ''} onChange={handleChange} placeholder="age"/>
+                </div>
+                <div className={css.OrdersUpdateA}>
+                    <p>course:</p>
+                    <select name="course" value={formData.course} onChange={handleChange}>
+                        <option value="">Select Course</option>
+                        <option value="FS">FS</option>
+                        <option value="QACX">QACX</option>
+                        <option value="JCX">JCX</option>
+                        <option value="JSCX">JSCX</option>
+                        <option value="FE">FE</option>
+                        <option value="PCX">PCX</option>
+                    </select>
+                </div>
+                <div className={css.OrdersUpdateA}>
+                    <p>course_format:</p>
+                    <select name="courseFormat" value={formData.course_format} onChange={handleChange}>
+                        <option value="">Select courseFormat</option>
+                        <option value="online">online</option>
+                        <option value="static">static</option>
+                    </select>
+                </div>
+                <div className={css.OrdersUpdateA}>
+                    <p>course_type:</p>
+                    <select name="courseType" value={formData.course_type} onChange={handleChange}>
+                        <option value="">Select courseType</option>
+                        <option value="pro">pro</option>
+                        <option value="minimal">minimal</option>
+                        <option value="premium">premium</option>
+                        <option value="incubator">incubator</option>
+                        <option value="vip">vip</option>
+                    </select>
+                </div>
+                <div className={css.OrdersUpdateA}>
+                    <p>status:</p>
+                    <select name="status" value={formData.status} onChange={handleChange}>
+                        <option value="">Select status</option>
+                        <option value="In Work">In Work</option>
+                        <option value="New">New</option>
+                        <option value="Aggre">Aggre</option>
+                        <option value="Disaggre">Disaggre</option>
+                        <option value="Dubbing">Dubbing</option>
+                    </select>
+                </div>
+                <div className={css.OrdersUpdateA}>
+                    <p>sum:</p>
+                    <input type="text" name="sum" value={formData.sum || ''} onChange={handleChange} placeholder="sum"/>
+                </div>
+                <div className={css.OrdersUpdateA}>
+                    <p>phone:</p>
+                    <input type="text" name="phone" value={formData.phone || ''} onChange={handleChange}
+                           placeholder="Phone"/>
+                </div>
+                <div className={css.OrdersUpdateB}>
+                    <p>Group:</p>
+                    <select name="group" value={formData.group || ''} onChange={handleChange}>
+                        <option value="">Select a group</option>
+                        {groups.map((group: IGroup) => (
+                            <option key={group._id} value={group.name}>{group.name}</option>))}
+                    </select>
+                    <div className={css.GroupCreate}>
+                        <input type="text" placeholder="New group" value={newGroup}
+                               onChange={(e) => setNewGroup(e.target.value)}/>
+                        <button type="button" onClick={handleAddGroup}>Add a group</button>
+                    </div>
+                </div>
+                <div className={css.OrdersUpdateC}>
+                    <button type="button" onClick={handleSave}>Save</button>
+                    <button type="button" onClick={closeModal}>Cancel</button>
+                </div>
+
             </form>
         </div>
     );
 };
-export {UpdateOrder};
+export {
+    UpdateOrder
+};

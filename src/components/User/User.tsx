@@ -8,11 +8,16 @@ interface IProps extends PropsWithChildren {
     user: IUser
 }
 const User: FC<IProps> = ({user}) => {
-    const {name,_id} = user;
+    const {name,_id,email,surname} = user;
 
     return (
+
         <div className={css.User}>
-            <div>{user.name}</div>
+            <div>id:{user._id}</div>
+            <div>email:{user.email}</div>
+            <div>name:{user.name}</div>
+            <div>surname:{user.surname}</div>
+
         </div>
     );
 };

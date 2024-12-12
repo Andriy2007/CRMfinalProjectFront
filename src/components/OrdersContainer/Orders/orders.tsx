@@ -1,11 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {useNavigate, useSearchParams} from 'react-router-dom';
 
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHook";
-import {usePageQuery} from "../../../hook/usePageQuery";
+import {generatePageNumbers, usePageQuery} from "../../../hook/usePageQuery";
 import {Order} from "../Order/order";
 import {orderActions} from "../../../store/slices";
 import css from "./orders.module.css";
+import {debounce} from "../../../hook/debounce";
 
 
 const Orders = () => {
@@ -13,7 +14,8 @@ const Orders = () => {
     const { isAuthenticated } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { page, prevPage, nextPage } = usePageQuery();
+    const totalPages = 20;
+    const { page, setPage, prevPage, nextPage } = usePageQuery();
     const [searchParams, setSearchParams] = useSearchParams();
     const [selectedCourse, setSelectedCourse] = useState(searchParams.get('course') || 'Toggle Course');
     const [selectedCourseFormat, setSelectedCourseFormat] = useState(searchParams.get('course_format') || 'Toggle Course Format');
@@ -21,6 +23,14 @@ const Orders = () => {
     const [selectedStatus, setSelectedStatus] = useState(searchParams.get('status') || 'Toggle Status');
     const [sortField, setSortField] = useState(searchParams.get('orderBy') || 'age');
     const [sortOrder, setSortOrder] = useState(searchParams.get('order') || 'asc');
+    type FilterKey = 'searchByName' | 'searchBySurname' | 'searchByEmail' | 'searchByPhone' | 'searchByAge';
+    const [localSearchValues, setLocalSearchValues] = useState<Record<FilterKey, string>>({
+        searchByName: searchParams.get('searchByName') || '',
+        searchBySurname: searchParams.get('searchBySurname') || '',
+        searchByEmail: searchParams.get('searchByEmail') || '',
+        searchByPhone: searchParams.get('searchByPhone') || '',
+        searchByAge: searchParams.get('searchByAge') || '',
+    });
     const sortableFields = [
         '_id', 'name', 'surname', 'email', 'age', 'phone',
         'course', 'course_format', 'course_type', 'status',
@@ -40,6 +50,7 @@ const Orders = () => {
         status: false,
         course_format: false,
     });
+    const pageNumbers = generatePageNumbers(page, totalPages);
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
         if (!token) {
@@ -48,6 +59,7 @@ const Orders = () => {
             const params = Object.fromEntries(searchParams.entries());
             dispatch(orderActions.getAllOrders({
                 page: params.page || "1",
+                limit: params.limit || "",
                 course_format: params.course_format || "",
                 course: params.course || "",
                 course_type: params.course_type || "",
@@ -69,6 +81,7 @@ const Orders = () => {
         const newParams = new URLSearchParams(searchParams);
         newParams.set('orderBy', field);
         newParams.set('order', newOrder);
+        newParams.set('page', '1');
         setSearchParams(newParams);
     };
     const updateFilter = (key: string, value: string) => {
@@ -78,6 +91,7 @@ const Orders = () => {
         } else {
             newParams.delete(key);
         }
+        newParams.set('page', '1');
         setSearchParams(newParams);
         if (key === 'course') {
             setSelectedCourse(value || 'Toggle Course');
@@ -110,19 +124,45 @@ const Orders = () => {
         setSelectedStatus('Toggle Status');
         setSortField('age');
         setSortOrder('asc');
+        setLocalSearchValues({
+            searchByName: '',
+            searchBySurname: '',
+            searchByEmail: '',
+            searchByPhone: '',
+            searchByAge: '',
+        });
     };
+    const debouncedUpdateFilter = useCallback(debounce((newParams: URLSearchParams) => {
+        setSearchParams(newParams);
+    }, 1000), []);
+    const updateSearchFilter = (key: FilterKey, value: string) => {
+        setLocalSearchValues(prevState => {
+            const updatedValues = { ...prevState, [key]: value };
+            const newParams = new URLSearchParams();
+            Object.keys(updatedValues).forEach(k => {
+                newParams.set(k as FilterKey, updatedValues[k as FilterKey]);
+            });
+            debouncedUpdateFilter(newParams);
+            return updatedValues;
+        });
+    };
+    const handleInputChange = (key: FilterKey, value: string) => {
+        updateSearchFilter(key, value);
+    };
+
 
     return (
         <div className={css.Orders}>
             <div className={css.filtersTop}>
                 {filters.map(filter => (
-                    <div  key={filter.key} className={css[`filter${filter.key}`]}>
+                    <div key={filter.key} className={css[`filter${filter.key}`]}>
                         <input
                             type="text"
                             placeholder={`Search by ${filter.label}`}
-                            value={searchParams.get(filter.key) || ''}
-                            onChange={(e) => updateFilter(filter.key, e.target.value)}
+                            value={localSearchValues[filter.key as FilterKey] || ''}
+                            onChange={(e) => handleInputChange(filter.key as FilterKey, e.target.value)}
                         />
+
                     </div>))}
             </div>
             <div className={css.filtersBot}>
@@ -130,7 +170,7 @@ const Orders = () => {
                     <button onClick={() => toggleDropdown('course')}>{selectedCourse}</button>
                     {dropdownState.course && (
                         <div className={css.dropdownContent}>
-                            <button onClick={() => updateFilter('course', 'FS')}>FS</button>
+                        <button onClick={() => updateFilter('course', 'FS')}>FS</button>
                             <button onClick={() => updateFilter('course', 'QACX')}>QACX</button>
                             <button onClick={() => updateFilter('course', 'JCX')}>JCX</button>
                             <button onClick={() => updateFilter('course', 'JSCX')}>JSCX</button>
@@ -193,9 +233,30 @@ const Orders = () => {
             <div className={css.zxc}>{orders.map(order => (<Order key={order._id} order={order}/>))}
             </div>
             <div className={css.pag}>
-                <button onClick={prevPage}> {`<<`} </button>
-                <h5 className={css.Page}> Page: {page}</h5>
-                <button onClick={nextPage}> {`>>`} </button>
+                <div className={css.pag}>
+                    <button onClick={prevPage} disabled={page === 1}>{`<<`}</button>
+                    {pageNumbers.map((pageNum, index) => (
+                        typeof pageNum === 'number' ? (
+                            <button
+                                key={index}
+                                onClick={() => setPage(pageNum)}
+                                className={pageNum === page ? css.activePage : ''}
+                            >
+                                {pageNum}
+                            </button>
+                        ) : (
+                            <button
+                                key={index}
+                                onClick={() => {}}
+                                className={css.dotsButton}
+                                disabled
+                            >
+                                {pageNum}
+                            </button>
+                        )
+                    ))}
+                    <button onClick={() => nextPage(totalPages)} disabled={page === totalPages}>{`>>`}</button>
+                </div>
             </div>
         </div>
     );

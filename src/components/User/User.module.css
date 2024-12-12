@@ -1,0 +1,136 @@
+.User {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+
+    border-collapse: collapse;
+    border: 1px solid purple;
+
+}
+.Users {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-collapse: collapse;
+    row-gap: 30px;
+    margin-top: 20px;
+}
+.statistic {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.statistic h3 {
+    height: 1px;
+}
+.statistic p {
+height: 1px;
+}
+.statistic ul {
+display: flex;
+    column-gap: 35px;
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+
+.modalContent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    height: 400px;
+    position: relative;
+    z-index: 1010;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 30px;
+}
+.modalContent input {
+    width: 200px;
+    height: 100px;
+}
+.modalContent button {
+    width: 150px;
+    height: 100px;
+    cursor: pointer;
+}
+
+.closeButton {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+.createUser {
+    display: flex;
+    justify-content: center;
+
+}
+.createUser button {
+    width: 200px;
+    height: 50px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+}
+.createUser button:hover {
+    cursor: pointer;
+    background-color: #957c8e;
+}
+.userBlock {
+    width: 1100px;
+    height: 200px;
+    display: flex;
+    border-radius: 10px;
+    border: 5px solid #957c8e;
+    column-gap: 30px;
+}
+.UserInfo p{
+    height: 3px;
+    margin: 15px 10px 10px 10px;
+    font-size: 16px;
+    font-weight: bold;
+}
+.UserInfo {
+    display: flex;
+    flex-direction: column;
+}
+.userStatistics {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.userStatistics p {
+    height: 3px;
+    font-size: 16px;
+    font-weight: bold;
+}
+.userButtons {
+display: flex;
+    margin: 15px 10px 10px 10px;
+}
+.userButtons button {
+    height: 50px;
+    font-size: 14px;
+    font-weight: bold;
+}
+.userButtons button:hover {
+    cursor: pointer;
+    background-color: #957c8e;
+}

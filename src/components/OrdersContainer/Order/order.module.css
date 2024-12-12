@@ -1,3 +1,142 @@
 .dropdownContent {
     width: 200px;
 }
+.Order {
+    display: flex;
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+    flex-direction: column;
+    justify-content: space-around;
+}
+.Order td:nth-child(2),.Order td:nth-child(3),.Order td:nth-child(5),.Order td:nth-child(6),.Order td:nth-child(7),.Order td:nth-child(8),.Order td:nth-child(9),
+.Order td:nth-child(10),.Order td:nth-child(11),.Order td:nth-child(12),.Order td:nth-child(13),.Order td:nth-child(14),.Order td:nth-child(15) {
+    width: 7%;
+    height: 30px;
+    min-width: 84.5px;
+    border-collapse: collapse;
+    border: 1px solid purple;
+    font-size: 13px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+table {
+    width: 100%;
+    height: 100%;
+}
+.Order td:nth-child(4) {
+    width: 12%;
+    height: 30px;
+    border-collapse: collapse;
+    border: 1px solid purple;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 270px;
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+.clickableRow td:nth-child(1) {
+    width: 3%;
+    height: 30px;
+    min-width: 35px;
+    border-collapse: collapse;
+    border: 1px solid purple;
+    font-size: 13px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+}
+.expandedRow {
+    display: flex;
+    height: 200px;
+    align-items: center;
+    background-color: #df7fc8;
+
+}
+.details {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+}
+.commentSection {
+    display: flex;
+}
+.commentSectionm {
+    display: flex;
+    flex-direction: column;
+}
+.commentDisplay {
+    display: flex;
+    justify-content: space-between;
+}
+.commentSectionm textarea {
+    width: 500px;
+}
+.qwe {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    background-color: #df7fc8;
+    justify-content: space-around;
+    align-items: center;
+}
+.qwe button {
+    height: 70px;
+    background-color: gainsboro;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.qwe button:hover {
+    background-color: #957c8e;
+}
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modalContent {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    width: 80%;
+    max-width: 500px;
+    z-index: 1010;
+    position: relative;
+}
+
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.clickableRow {
+    background-color: #ff33cc;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.clickableRow:hover {
+    background-color: #0056b3;
+}
+

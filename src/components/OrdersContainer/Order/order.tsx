@@ -1,10 +1,10 @@
-import React, {FC, PropsWithChildren, useState} from "react";
+import React, {FC, PropsWithChildren, useEffect, useState} from "react";
 
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHook";
 import {UpdateOrder} from "../OrderUpdate/order.update";
-import {orderActions} from "../../../store/slices";
+import {orderActions, userActions} from "../../../store/slices";
 import {IOrder} from "../../../interfaces";
-import css from "../Orders/orders.module.css";
+import css from "../Order/order.module.css";
 
 
 interface IProps extends PropsWithChildren {
@@ -16,11 +16,19 @@ const Order: FC<IProps> = ({order}) => {
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
     const [comment, setComment] = useState('');
     const currentUser = useAppSelector((state) => state.auth.user);
-    const canAddComment = !order.manager || order.manager === currentUser?.surname;
-
+    const canAddComment = !order.manager || order.manager === currentUser?._id;
+    const { users } = useAppSelector((state) => state.users);
     const toggleExpand = (id: string) => {setExpandedOrderId((prev) => (prev === id ? null : id));};
     const handleUpdateClick = () => {setIsUpdateModalOpen(true);};
     const handleCloseModal = () => {setIsUpdateModalOpen(false);};
+
+
+    useEffect(() => {
+        if (users.length === 0) {
+            dispatch(userActions.getAllUsers());
+        }
+    }, [dispatch, users.length]);
+
     const handleCommentSubmit = () => {
         if (!canAddComment) {
             alert('You cannot add a comment');
@@ -28,9 +36,13 @@ const Order: FC<IProps> = ({order}) => {
         }
         const updatedOrder = {
             ...order,
-            manager: currentUser?.surname || '',
+            manager: currentUser?._id || '',
             status: order.status === null || order.status === 'New' ? 'In Work' : order.status,
-            comment: comment,
+            comment: {
+                text: comment,
+                author: currentUser?.surname || 'Unknown',
+                date: new Date().toISOString().substring(0, 10),
+            },
         };
 
         dispatch(orderActions.updateOrder({ _id: order._id, updatedOrder }))
@@ -43,7 +55,6 @@ const Order: FC<IProps> = ({order}) => {
                 alert('Error adding comment');
             });
     };
-
     return (
         <div className={css.Order}>
             <table>
@@ -61,31 +72,48 @@ const Order: FC<IProps> = ({order}) => {
                     <td>{order.status}</td>
                     <td>{order.sum}</td>
                     <td>{order.alreadyPaid}</td>
-                    <td>{order.created_at}</td>
+                    <td>{order.created_at
+                        ? new Date(order.created_at).toLocaleDateString('uk-UA', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        })
+                        : ' '}
+                    </td>
                     <td>{order.group}</td>
-                    <td>{order.manager}</td>
+                    <td>{users.find(u => u._id === order.manager)?.surname}</td>
                 </tr>
                 {expandedOrderId === order._id && (
                     <tr className={css.expandedRow}>
                         <td className={css.qwe} colSpan={15}>
-                            <div className={css.details}>
+                        <div className={css.details}>
                                 <p>msg: {order.msg}</p>
                                 <p>utm: {order.utm}</p>
+                            </div>
+                            <div className={css.commentSectionm}>
+                                {order.comment && (
+                                    <div className={css.commentDisplay}>
+                                        <p>Comment: {order.comment.text}</p>
+                                        <p>Author: {order.comment.author}</p>
+                                        <p>Date: {order.comment.date}</p>
+                                    </div>
+                                )}
                                 {canAddComment && (
                                     <div className={css.commentSection}>
-                                    <textarea
-                                        placeholder="Enter your comment"
-                                        value={comment}
-                                        onChange={(e) => setComment(e.target.value)}
-                                    />
+                                            <textarea
+                                                placeholder="Enter your comment"
+                                                value={comment}
+                                                onChange={(e) => setComment(e.target.value)}
+                                            />
                                         <button onClick={handleCommentSubmit}>Add a comment</button>
                                     </div>
                                 )}
                                 {!canAddComment && (
                                     <p>This request is already being processed by the manager {order.manager}</p>
                                 )}
-                                <button onClick={handleUpdateClick}>Update</button>
                             </div>
+                                <button onClick={handleUpdateClick}>Update</button>
+
                         </td>
                     </tr>
                 )}

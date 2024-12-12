@@ -17,8 +17,12 @@ const Header = () => {
         <div className={css.Header}>
             <h2 className={css.Logo}>{isAuthenticated && user ? `Welcome, ${user.name}` : 'LOGO'}</h2>
             <div className={css.header}><NavLink to={isAuthenticated ? '/orders' : '/logIn'}>Orders</NavLink></div>
-            <div className={css.header}><NavLink to={isAuthenticated ? '/users' : '/logIn'}>Users</NavLink></div>
-            <div className={css.footer}><button onClick={handleLogout}>Logout</button></div>
+            <div className={css.acc}>
+                {isAuthenticated && user && user.role === 'ADMIN' && (
+                    <div className={css.adminPanel}><NavLink to={'/users'}>AdminPanel</NavLink></div>
+                )}
+            <div className={css.exit}><button onClick={handleLogout}>Logout</button></div>
+            </div>
         </div>
     );
 };
