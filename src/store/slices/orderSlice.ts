@@ -8,12 +8,14 @@ import {apiService, ordersService} from "../../services";
 
 interface IOrderStatistics {
     total: number;
+    limit: number;
     statusCounts: Record<string, number>;
 }
 
 interface IUserOrderStatistics {
     [userId: string]: {
         total: number;
+        limit: number;
         statusCounts: Record<string, number>;
     };
 }
@@ -35,6 +37,7 @@ const initialState: IState = {
     order: null,
     statistics: {
         total: 0,
+        limit: 0,
         statusCounts: {},
     },
     userStatistics: {},
@@ -101,11 +104,12 @@ const orderSlice = createSlice({
     extraReducers: builder =>
         builder
             .addCase(getAllOrders.fulfilled, (state, action) => {
-                const orders = action.payload.data;
-                const users = state.users;
+                const { data: orders, total, limit } = action.payload;
                 state.orders = orders;
+                const users = state.users;
                 const statistics = {
-                    total: orders.length,
+                    total,
+                    limit,
                     statusCounts: orders.reduce((acc: Record<string, number>, order: IOrder) => {
                         acc[order.status] = (acc[order.status] || 0) + 1;
                         return acc;
@@ -119,6 +123,7 @@ const orderSlice = createSlice({
                     if (!userStatistics[userId]) {
                         userStatistics[userId] = {
                             total: 0,
+                            limit: 0,
                             statusCounts: {},
                         };
                     }
@@ -129,7 +134,7 @@ const orderSlice = createSlice({
                 users.forEach((user: IUser) => {
                     const userId = user._id;
                     if (!userStatistics[userId]) {
-                        userStatistics[userId] = { total: 0, statusCounts: {} };
+                        userStatistics[userId] = { total: 0, limit: 0, statusCounts: {} };
                     }
                 });
                 state.userStatistics = userStatistics;

@@ -33,8 +33,6 @@ const createUser = createAsyncThunk(
     async (userData: Partial<IUser>, thunkAPI) => {
         try {
             const { data } = await userService.createUser(userData);
-            console.log('Sending user data:', userData);
-            console.log('Sending user data:', data);
             return data;
         } catch (e) {
             const error = e as AxiosError;

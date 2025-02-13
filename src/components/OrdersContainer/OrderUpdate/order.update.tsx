@@ -143,7 +143,7 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
                     <p>status:</p>
                     <select name="status" value={formData.status} onChange={handleChange}>
                         <option value="">Select status</option>
-                        <option value="In Work">In Work</option>
+                        <option value="InWork">In Work</option>
                         <option value="New">New</option>
                         <option value="Aggre">Aggre</option>
                         <option value="Disaggre">Disaggre</option>

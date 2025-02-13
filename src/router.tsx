@@ -15,10 +15,10 @@ const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
             { index: true, element: <Navigate to="logIn" /> },
-            { path: 'orders', element: <OrdersPage /> },
+            { path: 'orders', element: <AuthRoute><OrdersPage /></AuthRoute> },
             { path: 'users', element: <UsersPage /> },
             { path: 'set-password/:token', element: <SetPasswordPage  /> },
-            { path: 'logIn', element: <AuthRoute><AuthPage /></AuthRoute> },
+            { path: 'logIn', element: <AuthPage /> },
         ],
     },
 ]);

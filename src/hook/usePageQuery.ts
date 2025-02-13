@@ -8,13 +8,19 @@ const usePageQuery = () => {
         page,
         setPage: (newPage: number) => setParams({ ...Object.fromEntries(params.entries()), page: newPage.toString() }),
         prevPage: () => setParams({ ...Object.fromEntries(params.entries()), page: Math.max(1, page - 1).toString() }),
-        nextPage: (totalPages: number) => setParams({ ...Object.fromEntries(params.entries()), page: Math.min(totalPages, page + 1).toString() }),
+        nextPage: (totalPages: number) => {
+            if (page < totalPages) {
+                setParams({
+                    ...Object.fromEntries(params.entries()),
+                    page: Math.min(Math.max(1, totalPages), page + 1).toString()
+                });
+            }
+        }
     };
 };
 
 const generatePageNumbers = (currentPage: number, totalPages: number) => {
     const pageNumbers = [];
-
     if (totalPages <= 7) {
         for (let i = 1; i <= totalPages; i++) {
             pageNumbers.push(i);
@@ -36,7 +42,6 @@ const generatePageNumbers = (currentPage: number, totalPages: number) => {
         }
         pageNumbers.push('...', totalPages);
     }
-
     return pageNumbers;
 };
 

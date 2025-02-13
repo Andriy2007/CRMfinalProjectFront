@@ -4,18 +4,19 @@ import {useNavigate, useSearchParams} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHook";
 import {generatePageNumbers, usePageQuery} from "../../../hook/usePageQuery";
 import {Order} from "../Order/order";
-import {orderActions} from "../../../store/slices";
+import {orderActions, userActions} from "../../../store/slices";
 import css from "./orders.module.css";
 import {debounce} from "../../../hook/debounce";
 
 
 const Orders = () => {
-    const { orders } = useAppSelector(state => state.orders);
+    const { orders, statistics, } = useAppSelector(state => state.orders);
     const { isAuthenticated } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const totalPages = 20;
     const { page, setPage, prevPage, nextPage } = usePageQuery();
+    const { total, limit } = statistics;
+    const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
     const [searchParams, setSearchParams] = useSearchParams();
     const [selectedCourse, setSelectedCourse] = useState(searchParams.get('course') || 'Toggle Course');
     const [selectedCourseFormat, setSelectedCourseFormat] = useState(searchParams.get('course_format') || 'Toggle Course Format');
@@ -57,6 +58,7 @@ const Orders = () => {
             navigate('/logIn');
         } else {
             const params = Object.fromEntries(searchParams.entries());
+            dispatch(userActions.getAllUsers());
             dispatch(orderActions.getAllOrders({
                 page: params.page || "1",
                 limit: params.limit || "",
@@ -162,7 +164,6 @@ const Orders = () => {
                             value={localSearchValues[filter.key as FilterKey] || ''}
                             onChange={(e) => handleInputChange(filter.key as FilterKey, e.target.value)}
                         />
-
                     </div>))}
             </div>
             <div className={css.filtersBot}>
@@ -204,8 +205,11 @@ const Orders = () => {
                     <button onClick={() => toggleDropdown('status')}>{selectedStatus}</button>
                     {dropdownState.status && (
                         <div className={css.dropdownContent}>
-                            <button onClick={() => updateFilter('status', 'In work')}>In work</button>
+                            <button onClick={() => updateFilter('status', 'InWork')}>In work</button>
                             <button onClick={() => updateFilter('status', 'New')}>New</button>
+                            <button onClick={() => updateFilter('status', 'Aggre')}>Aggre</button>
+                            <button onClick={() => updateFilter('status', 'Disaggre')}>Disaggre</button>
+                            <button onClick={() => updateFilter('status', 'Dubbing')}>Dubbing</button>
                             <button onClick={() => updateFilter('status', '')}>Clear Status</button>
                         </div>)}
                 </div>

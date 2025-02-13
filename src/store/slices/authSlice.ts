@@ -10,7 +10,7 @@ interface AuthState {
 }
 const initialState: AuthState = {
     isAuthenticated: !!token,
-    user: token ? JSON.parse(localStorage.getItem('user') || '{}') : null,
+    user: token ? JSON.parse(localStorage.getItem("user") || "{}") : null,
 };
 
 const authSlice = createSlice({
@@ -26,6 +26,7 @@ const authSlice = createSlice({
             state.isAuthenticated = false;
             state.user = null;
             localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
             localStorage.removeItem('user');
         },
     },

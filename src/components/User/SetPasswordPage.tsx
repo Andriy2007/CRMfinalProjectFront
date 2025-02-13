@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const SetPasswordPage = () => {
-    const { token } = useParams(); // Отримуємо токен з URL
+    const { token } = useParams();
     const navigate = useNavigate();
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -11,8 +11,8 @@ const SetPasswordPage = () => {
     const handleSetPassword = async () => {
         try {
             await axios.post("http://localhost:3002/auth/set-password", { token, password });
-            alert("Password set successfully! You can now log in.");
-            navigate("/login");
+            alert("Password set successfully!");
+            navigate("/users");
         } catch (err) {
             setError("Failed to set password. Try again.");
         }

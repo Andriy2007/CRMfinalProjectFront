@@ -14,7 +14,7 @@ const Users = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [formData, setFormData] = useState({ name: "", surname: "", email: "", password: "",role: "Manager", });
+    const [formData, setFormData] = useState({ name: "", surname: "", email: "",role: "Manager", });
 
     useEffect(() => {
         const token = localStorage.getItem('accessToken');
@@ -48,17 +48,22 @@ const Users = () => {
 
     const handleCreate = async () => {
         try {
-            let requestData = { ...formData };
-            requestData.role = requestData.role || 'Manager';
-            if (!requestData.password) {
-                (requestData as any).password = undefined;
+            const emailRegex = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+            if (!emailRegex.test(formData.email)) {
+                alert("Неправильний формат email");
+                return;
             }
-            await dispatch(userActions.createUser(requestData));
+            const { role, ...requestData } = formData;
+            await dispatch(userActions.createUser(requestData)).unwrap();
             setIsModalOpen(false);
-        } catch (error) {
-            console.error("Error creating user", error);
+        } catch (error: any) {
+            if (error && error.message && error.message.includes("already exists")) {
+            } else {
+                alert("Такий email вже використовується");
+            }
         }
     };
+
 
     const handleCloseModal = () => {
         setIsModalOpen(false);
@@ -110,8 +115,7 @@ const Users = () => {
                 <p>Total Orders: {statistics.total}</p>
                 <ul>
                     {Object.entries(statistics.statusCounts).map(([status, count]) => (
-                        <li key={status}>
-                            {status}: {count}
+                        <li key={status}>{status}: {count}
                         </li>
                     ))}
                 </ul>
@@ -182,8 +186,6 @@ const Users = () => {
                                 Unban
                             </button>
                         </div>
-
-
                     </div>
                 ))}
             </div>

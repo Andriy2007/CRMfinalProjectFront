@@ -1,9 +1,9 @@
-import React, {FC, PropsWithChildren, useEffect, useState} from "react";
+import React, {FC, PropsWithChildren, useState} from "react";
 
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHook";
 import {UpdateOrder} from "../OrderUpdate/order.update";
-import {orderActions, userActions} from "../../../store/slices";
-import {IOrder} from "../../../interfaces";
+import {orderActions} from "../../../store/slices";
+import {IOrder, IUser} from "../../../interfaces";
 import css from "../Order/order.module.css";
 
 
@@ -17,17 +17,11 @@ const Order: FC<IProps> = ({order}) => {
     const [comment, setComment] = useState('');
     const currentUser = useAppSelector((state) => state.auth.user);
     const canAddComment = !order.manager || order.manager === currentUser?._id;
+    const canUpdateOrder = !order.manager || order.manager === currentUser?._id;
     const { users } = useAppSelector((state) => state.users);
     const toggleExpand = (id: string) => {setExpandedOrderId((prev) => (prev === id ? null : id));};
     const handleUpdateClick = () => {setIsUpdateModalOpen(true);};
     const handleCloseModal = () => {setIsUpdateModalOpen(false);};
-
-
-    useEffect(() => {
-        if (users.length === 0) {
-            dispatch(userActions.getAllUsers());
-        }
-    }, [dispatch, users.length]);
 
     const handleCommentSubmit = () => {
         if (!canAddComment) {
@@ -55,6 +49,12 @@ const Order: FC<IProps> = ({order}) => {
                 alert('Error adding comment');
             });
     };
+
+    const getManagerName = (managerId: string) => {
+        const manager = users.find((user: IUser) => user._id === managerId);
+        return manager ? `${manager.name} ${manager.surname}` : managerId;
+    };
+
     return (
         <div className={css.Order}>
             <table>
@@ -81,7 +81,7 @@ const Order: FC<IProps> = ({order}) => {
                         : ' '}
                     </td>
                     <td>{order.group}</td>
-                    <td>{users.find(u => u._id === order.manager)?.surname}</td>
+                    <td>{getManagerName(order.manager)}</td>
                 </tr>
                 {expandedOrderId === order._id && (
                     <tr className={css.expandedRow}>
@@ -109,10 +109,14 @@ const Order: FC<IProps> = ({order}) => {
                                     </div>
                                 )}
                                 {!canAddComment && (
-                                    <p>This request is already being processed by the manager {order.manager}</p>
+                                    <p>This request is already being processed by the manager {getManagerName(order.manager)}</p>
                                 )}
                             </div>
+                            {canUpdateOrder ? (
                                 <button onClick={handleUpdateClick}>Update</button>
+                            ) : (
+                                <p>This order can only be updated by {getManagerName(order.manager)}</p>
+                            )}
 
                         </td>
                     </tr>

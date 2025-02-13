@@ -1,6 +1,7 @@
 export interface IOrders {
     page: number,
     total: number;
+    limit: number;
     "total_pages": number,
     "total_results": number
     results: IOrder[],

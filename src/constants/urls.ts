@@ -11,7 +11,7 @@ const usersActivate = '/auth/send-activation-link'
 const recoverPassword = '/auth/send-recovery-link';
 const usersBan = '/users/ban'
 const usersUnBan = '/users/unban'
-
+const refreshToken = "/auth/refresh-token";
 
 
 const urls = {
@@ -25,7 +25,8 @@ const urls = {
     usersActivate,
     recoverPassword,
     creatPassword,
-    creatNewPassword
+    creatNewPassword,
+    refreshToken
 }
 export {
     baseURL,
