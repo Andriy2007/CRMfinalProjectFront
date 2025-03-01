@@ -15,7 +15,7 @@ const usePageQuery = () => {
                     page: Math.min(Math.max(1, totalPages), page + 1).toString()
                 });
             }
-        }
+        },
     };
 };
 

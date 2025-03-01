@@ -9,10 +9,12 @@
 }
 .Users {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     align-items: center;
     border-collapse: collapse;
+    justify-content: center;
     row-gap: 30px;
+    column-gap: 30px;
     margin-top: 20px;
 }
 .statistic {
@@ -94,7 +96,7 @@ display: flex;
     background-color: #957c8e;
 }
 .userBlock {
-    width: 1100px;
+    width: 48%;
     height: 200px;
     display: flex;
     border-radius: 10px;
@@ -104,7 +106,7 @@ display: flex;
 .UserInfo p{
     height: 3px;
     margin: 15px 10px 10px 10px;
-    font-size: 16px;
+    font-size: 13px;
     font-weight: bold;
 }
 .UserInfo {
@@ -127,10 +129,108 @@ display: flex;
 }
 .userButtons button {
     height: 50px;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
 }
 .userButtons button:hover {
     cursor: pointer;
     background-color: #957c8e;
+}
+.loGiN {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+}
+.box {
+    margin-top: 200px;
+    height: 500px;
+    width: 800px;
+    background-color: aliceblue;
+    display: flex;
+    border-radius: 10px;
+    flex-direction: column;
+}
+.head {
+    width: 100%;
+    height: 150px;
+    background-color: gainsboro;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.blank {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    flex-direction: column;
+}
+form {
+    display: flex;
+    flex-direction: column;
+}
+.blank input {
+    width: 300px;
+    height: 50px;
+}
+
+.name {
+    width: 300px;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
+}
+.footer {
+    display: flex;
+    justify-content: space-evenly;
+}
+.footer button {
+    width: 200px;
+    height: 40px;
+}
+button {
+    width: 60px;
+    background-color: gainsboro;
+    border-radius: 10px;
+
+}
+body {
+    background-color: #d0bfbf;
+}
+.inputWrapper {
+    position: relative;
+    width: 40%;
+}
+
+.inputWrapper input {
+    width: 100%;
+    padding: 10px;
+    padding-right: 40px;
+    box-sizing: border-box;
+}
+
+.eyeButton {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.pag {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+.pag button {
+    width: 100px;
+    height: 30px;
+}
+.pag p {
+    font-size: 19px;
+    font-weight: bold
 }

@@ -1,27 +1,30 @@
-import React, {FC, PropsWithChildren, useState} from "react";
+import React, {FC, PropsWithChildren, useEffect, useRef, useState} from "react";
 
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHook";
 import {UpdateOrder} from "../OrderUpdate/order.update";
-import {orderActions} from "../../../store/slices";
+import {orderActions, userActions} from "../../../store/slices";
 import {IOrder, IUser} from "../../../interfaces";
 import css from "../Order/order.module.css";
+import {usePageQuery} from "../../../hook/usePageQuery";
 
 
 interface IProps extends PropsWithChildren {
     order: IOrder
+    expandedOrderId: string | null;
+    toggleExpand: (id: string) => void;
+    index: number;
 }
-const Order: FC<IProps> = ({order}) => {
+const Order: FC<IProps> = ({ order, expandedOrderId, toggleExpand, index }) => {
     const dispatch = useAppDispatch();
-    const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
     const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+    const { orders, statistics, } = useAppSelector(state => state.orders);
+    const { page, setPage, prevPage, nextPage } = usePageQuery();
+    const { total, limit } = statistics;
     const [comment, setComment] = useState('');
     const currentUser = useAppSelector((state) => state.auth.user);
     const canAddComment = !order.manager || order.manager === currentUser?._id;
     const canUpdateOrder = !order.manager || order.manager === currentUser?._id;
     const { users } = useAppSelector((state) => state.users);
-    const toggleExpand = (id: string) => {setExpandedOrderId((prev) => (prev === id ? null : id));};
-    const handleUpdateClick = () => {setIsUpdateModalOpen(true);};
-    const handleCloseModal = () => {setIsUpdateModalOpen(false);};
 
     const handleCommentSubmit = () => {
         if (!canAddComment) {
@@ -38,7 +41,6 @@ const Order: FC<IProps> = ({order}) => {
                 date: new Date().toISOString().substring(0, 10),
             },
         };
-
         dispatch(orderActions.updateOrder({ _id: order._id, updatedOrder }))
             .then(() => {
                 alert('Comment added');
@@ -60,7 +62,7 @@ const Order: FC<IProps> = ({order}) => {
             <table>
                 <tbody>
                 <tr className={css.clickableRow} onClick={() => toggleExpand(order._id)}>
-                    <td>{order._id.substring(21)}</td>
+                    <td>{(page - 1) * limit + index + 1}</td>
                     <td>{order.name}</td>
                     <td>{order.surname}</td>
                     <td>{order.email}</td>
@@ -86,7 +88,7 @@ const Order: FC<IProps> = ({order}) => {
                 {expandedOrderId === order._id && (
                     <tr className={css.expandedRow}>
                         <td className={css.qwe} colSpan={15}>
-                        <div className={css.details}>
+                            <div className={css.details}>
                                 <p>msg: {order.msg}</p>
                                 <p>utm: {order.utm}</p>
                             </div>
@@ -113,11 +115,10 @@ const Order: FC<IProps> = ({order}) => {
                                 )}
                             </div>
                             {canUpdateOrder ? (
-                                <button onClick={handleUpdateClick}>Update</button>
+                                <button onClick={() => setIsUpdateModalOpen(true)}>Update</button>
                             ) : (
                                 <p>This order can only be updated by {getManagerName(order.manager)}</p>
                             )}
-
                         </td>
                     </tr>
                 )}
@@ -126,13 +127,25 @@ const Order: FC<IProps> = ({order}) => {
             {isUpdateModalOpen && (
                 <div className={css.modalOverlay}>
                     <div className={css.modalContent}>
-                        <button onClick={handleCloseModal} className={css.closeButton}>X</button>
-                        <UpdateOrder orderId={order._id} closeModal={handleCloseModal}/>
+                        <button onClick={() => setIsUpdateModalOpen(false)} className={css.closeButton}>X</button>
+                        <UpdateOrder orderId={order._id} closeModal={() => setIsUpdateModalOpen(false)} />
                     </div>
                 </div>
             )}
         </div>
     );
 };
+
+
+
+
+
+
+
+
+
+
+
+
 
 export {Order};

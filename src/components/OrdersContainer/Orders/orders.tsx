@@ -17,6 +17,7 @@ const Orders = () => {
     const { page, setPage, prevPage, nextPage } = usePageQuery();
     const { total, limit } = statistics;
     const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
+    const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
     const [searchParams, setSearchParams] = useSearchParams();
     const [selectedCourse, setSelectedCourse] = useState(searchParams.get('course') || 'Toggle Course');
     const [selectedCourseFormat, setSelectedCourseFormat] = useState(searchParams.get('course_format') || 'Toggle Course Format');
@@ -58,9 +59,9 @@ const Orders = () => {
             navigate('/logIn');
         } else {
             const params = Object.fromEntries(searchParams.entries());
-            dispatch(userActions.getAllUsers());
+            dispatch(userActions.getAllUsers({ page: 1, limit: 1000 }));
             dispatch(orderActions.getAllOrders({
-                page: params.page || "1",
+                page: params.page || "",
                 limit: params.limit || "",
                 course_format: params.course_format || "",
                 course: params.course || "",
@@ -137,13 +138,28 @@ const Orders = () => {
     const debouncedUpdateFilter = useCallback(debounce((newParams: URLSearchParams) => {
         setSearchParams(newParams);
     }, 1000), []);
+
     const updateSearchFilter = (key: FilterKey, value: string) => {
         setLocalSearchValues(prevState => {
             const updatedValues = { ...prevState, [key]: value };
             const newParams = new URLSearchParams();
             Object.keys(updatedValues).forEach(k => {
-                newParams.set(k as FilterKey, updatedValues[k as FilterKey]);
+                if (updatedValues[k as FilterKey] && updatedValues[k as FilterKey] !== 'Toggle Course' && updatedValues[k as FilterKey] !== 'Toggle Course Format' && updatedValues[k as FilterKey] !== 'Toggle Course Type' && updatedValues[k as FilterKey] !== 'Toggle Status') {
+                    newParams.set(k as FilterKey, updatedValues[k as FilterKey]);
+                }
             });
+            if (selectedCourse && selectedCourse !== 'Toggle Course') {
+                newParams.set('course', selectedCourse);
+            }
+            if (selectedCourseFormat && selectedCourseFormat !== 'Toggle Course Format') {
+                newParams.set('course_format', selectedCourseFormat);
+            }
+            if (selectedCourseType && selectedCourseType !== 'Toggle Course Type') {
+                newParams.set('course_type', selectedCourseType);
+            }
+            if (selectedStatus && selectedStatus !== 'Toggle Status') {
+                newParams.set('status', selectedStatus);
+            }
             debouncedUpdateFilter(newParams);
             return updatedValues;
         });
@@ -152,6 +168,13 @@ const Orders = () => {
         updateSearchFilter(key, value);
     };
 
+    const toggleExpand = (id: string) => {
+        if (expandedOrderId === id) {
+            setExpandedOrderId(null);
+        } else {
+            setExpandedOrderId(id);
+        }
+    };
 
     return (
         <div className={css.Orders}>
@@ -234,7 +257,15 @@ const Orders = () => {
                     </thead>
                 </table>
             </div>
-            <div className={css.zxc}>{orders.map(order => (<Order key={order._id} order={order}/>))}
+            <div className={css.zxc}>{orders.map((order, index) => (
+                <Order
+                    key={order._id}
+                    order={order}
+                    expandedOrderId={expandedOrderId}
+                    toggleExpand={toggleExpand}
+                    index={index}
+                />
+            ))}
             </div>
             <div className={css.pag}>
                 <div className={css.pag}>

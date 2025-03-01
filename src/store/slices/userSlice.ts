@@ -8,19 +8,23 @@ import {userService} from "../../services";
 interface IState {
     users: IUser[],
     user: IUser | null,
+    total: number;
+    limit: number;
 }
 const initialState: IState = {
     users: [],
     user: null,
+    total: 0,
+    limit: 4,
 };
 
-const getAllUsers = createAsyncThunk<IUsers>(
+const getAllUsers = createAsyncThunk<IUsers, { page: number, limit: number }>(
     'getAllUsers',
-    async (_, thunkAPI) => {
+    async ({ page, limit }, thunkAPI) => {
         try {
             const token = localStorage.getItem('accessToken');
             const config = token ? { headers: { Authorization: `${token}` } } : {};
-            const {data} = await userService.getAllUsers(config);
+            const {data} = await userService.getAllUsers({ page, limit },config);
             return data;
         } catch (e) {
             const error = e as AxiosError
@@ -37,6 +41,18 @@ const createUser = createAsyncThunk(
         } catch (e) {
             const error = e as AxiosError;
             return thunkAPI.rejectWithValue(error.response?.data ?? "Unknown error occurred");
+        }
+    }
+);
+const setPasswordUser = createAsyncThunk(
+    "setPasswordUser",
+    async ({ token, password }: { token: string; password: string }, thunkAPI) => {
+        try {
+            await userService.setPassword(token, password);
+            return "Password set successfully!";
+        } catch (e) {
+            const error = e as AxiosError;
+            return thunkAPI.rejectWithValue(error.response?.data ?? "Failed to set password");
         }
     }
 );
@@ -111,6 +127,7 @@ const userSlice = createSlice({
     extraReducers: builder => {
         builder.addCase(getAllUsers.fulfilled, (state, action) => {
             state.users = action.payload.data;
+            state.total = action.payload.total;
         });
         builder.addCase(createUser.fulfilled, (state, action) => {
             state.users.push(action.payload);
@@ -136,6 +153,7 @@ const userActions = {
     recoveryPassword,
     banUser,
     unbanUser,
+    setPasswordUser,
 }
 
 export {

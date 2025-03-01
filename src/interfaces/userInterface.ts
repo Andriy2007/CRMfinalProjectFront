@@ -12,6 +12,11 @@ export interface IUser {
 export interface IUsers {
     users: IUser[]
     data: IUser[];
+    page: number,
+    total: number;
+    limit: number;
+    "total_pages": number,
+    "total_results": number
 }
 export interface AuthProps {
     onLoginSuccess?: (userData: IUsers) => void;

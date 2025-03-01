@@ -5,12 +5,14 @@ import {IRequestConfig, IUser, IUsers} from "../interfaces";
 
 
 const userService = {
-    getAllUsers: (config: IRequestConfig = {},): IRes<IUsers> => {
-        return apiService.get(urls.users, {  ...config });
+    getAllUsers: (params: { page: number, limit: number },config: IRequestConfig = {},): IRes<IUsers> => {
+        return apiService.get(urls.users, {  ...config, params  });
     },
     createUser: (userData: Partial<IUser>): IRes<IUser> => {
         return apiService.post(urls.createUser, userData);
-
+    },
+    setPassword: (token: string, password: string): IRes<void> => {
+        return apiService.post(urls.creatPassword, { token, password ,confirmPassword: password});
     },
     activateUser: (userId: string, config = {}): IRes<{ activationLink: string }> => {
         return apiService.post(`${urls.usersActivate}`, { userId }, config);

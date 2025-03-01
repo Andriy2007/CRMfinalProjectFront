@@ -6,6 +6,7 @@ import {groupActions, orderActions} from "../../../store/slices";
 import {RootState} from "../../../types/reduxType";
 import {IGroup, IOrder} from "../../../interfaces";
 import css from "../OrderUpdate/orderUpdate.module.css";
+import {useAppSelector} from "../../../hook/reduxHook";
 
 
 interface UpdateOrderProps {
@@ -15,6 +16,7 @@ interface UpdateOrderProps {
 const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
     const dispatch = useDispatch<AppDispatch>();
     const order = useSelector((state: any) => state.orders.orders.find((o: IOrder) => o._id === orderId));
+    const currentUser = useAppSelector((state) => state.auth.user);
     const groups = useSelector((state: RootState) => state.groups.groups || []);
     const [newGroup, setNewGroup] = useState('');
     const [formData, setFormData] = useState<IOrder>({
@@ -76,12 +78,20 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
     };
 
     const handleSave = () => {
-        dispatch(orderActions.updateOrder({ _id: orderId, updatedOrder: formData }))
+        const updatedOrder = {
+            ...formData,
+            manager: currentUser?._id || formData.manager,
+            status: formData.status === null || formData.status === 'New' ? 'In Work' : formData.status,
+        };
+
+        dispatch(orderActions.updateOrder({ _id: orderId, updatedOrder }))
             .then(() => {
+                alert('Order updated successfully');
                 closeModal();
             })
             .catch((error) => {
                 console.error('Failed to update order:', error);
+                alert('Error updating order');
             });
     };
 
@@ -110,7 +120,7 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
                 </div>
                 <div className={css.OrdersUpdateA}>
                     <p>course:</p>
-                    <select name="course" value={formData.course} onChange={handleChange}>
+                    <select name="course" value={formData.course || ''} onChange={handleChange}>
                         <option value="">Select Course</option>
                         <option value="FS">FS</option>
                         <option value="QACX">QACX</option>
@@ -122,7 +132,7 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
                 </div>
                 <div className={css.OrdersUpdateA}>
                     <p>course_format:</p>
-                    <select name="courseFormat" value={formData.course_format} onChange={handleChange}>
+                    <select name="courseFormat" value={formData.course_format || ''} onChange={handleChange}>
                         <option value="">Select courseFormat</option>
                         <option value="online">online</option>
                         <option value="static">static</option>
@@ -130,7 +140,7 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
                 </div>
                 <div className={css.OrdersUpdateA}>
                     <p>course_type:</p>
-                    <select name="courseType" value={formData.course_type} onChange={handleChange}>
+                    <select name="courseType" value={formData.course_type || ''} onChange={handleChange}>
                         <option value="">Select courseType</option>
                         <option value="pro">pro</option>
                         <option value="minimal">minimal</option>
@@ -141,7 +151,7 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
                 </div>
                 <div className={css.OrdersUpdateA}>
                     <p>status:</p>
-                    <select name="status" value={formData.status} onChange={handleChange}>
+                    <select name="status" value={formData.status || ''} onChange={handleChange}>
                         <option value="">Select status</option>
                         <option value="InWork">In Work</option>
                         <option value="New">New</option>
