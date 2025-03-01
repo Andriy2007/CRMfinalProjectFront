@@ -55,6 +55,7 @@ const Users = () => {
             }
             const { role, ...requestData } = formData;
             await dispatch(userActions.createUser(requestData)).unwrap();
+            await dispatch(userActions.getAllUsers());
             setIsModalOpen(false);
         } catch (error: any) {
             if (error && error.message && error.message.includes("already exists")) {
