@@ -4,18 +4,13 @@ import {useAppDispatch, useAppSelector} from "../../hook/reduxHook";
 import {orderActions, userActions} from "../../store/slices";
 import css from './User.module.css';
 import {useNavigate} from "react-router-dom";
-import {usePageQuery} from "../../hook/usePageQuery";
 
 
 
 const Users = () => {
     const { users } = useAppSelector(state => state.users);
     const { statistics, userStatistics } = useAppSelector(state => state.orders);
-    const { page, setPage, prevPage, nextPage } = usePageQuery();
-    const { total, limit } = useAppSelector(state => state.users);
-    const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
     const { isAuthenticated } = useAppSelector(state => state.auth);
-    const { user: authUser } = useAppSelector(state => state.auth);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,7 +21,7 @@ const Users = () => {
         if (!token) {
             navigate('/logIn');
         } else {
-            dispatch(userActions.getAllUsers({ page, limit: 4 }));
+            dispatch(userActions.getAllUsers());
             dispatch(orderActions.getAllOrders({
                 page: '',
                 limit: '1000',
@@ -43,7 +38,7 @@ const Users = () => {
                 orderBy: '',
             }));
         }
-    }, [dispatch, page]);
+    }, [dispatch]);
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -60,7 +55,6 @@ const Users = () => {
             }
             const { role, ...requestData } = formData;
             await dispatch(userActions.createUser(requestData)).unwrap();
-            await dispatch(userActions.getAllUsers({ page, limit: 4 }));
             setIsModalOpen(false);
         } catch (error: any) {
             if (error && error.message && error.message.includes("already exists")) {
@@ -114,19 +108,15 @@ const Users = () => {
         }
     };
 
-    const handleNextPage = () => {
-        nextPage(totalPages);
-        dispatch(userActions.getAllUsers({ page: page + 1, limit: 4 }));
-    };
-
     return (
         <div>
             <div className={css.statistic}>
                 <h3>Order Statistics</h3>
                 <p>Total Orders: {statistics.total}</p>
                 <ul>
-                    {statistics?.statusCounts && Object.entries(statistics.statusCounts).map(([status, count], index) => (
-                        <li key={`stats-${status}-${index}`}>{status}: {count}</li>
+                    {Object.entries(statistics.statusCounts).map(([status, count]) => (
+                        <li key={status}>{status}: {count}
+                        </li>
                     ))}
                 </ul>
             </div>
@@ -142,17 +132,17 @@ const Users = () => {
                         <input
                             placeholder="Name"
                             value={formData.name}
-                            onChange={e => setFormData({...formData, name: e.target.value})}
+                            onChange={e => setFormData({ ...formData, name: e.target.value })}
                         />
                         <input
                             placeholder="Surname"
                             value={formData.surname}
-                            onChange={e => setFormData({...formData, surname: e.target.value})}
+                            onChange={e => setFormData({ ...formData, surname: e.target.value })}
                         />
                         <input
                             placeholder="Email"
                             value={formData.email}
-                            onChange={e => setFormData({...formData, email: e.target.value})}
+                            onChange={e => setFormData({ ...formData, email: e.target.value })}
                         />
                         <button onClick={handleCreate}>Submit</button>
                     </div>
@@ -161,7 +151,7 @@ const Users = () => {
 
             <div className={css.Users}>
                 {users?.length > 0 && users.map(user => (
-                    <div key={`user-${user._id}`} className={css.userBlock}>
+                    <div key={user._id} className={css.userBlock}>
                         <div className={css.UserInfo}>
                             <p>id: {user._id}</p>
                             <p>name: {user.name}</p>
@@ -171,47 +161,34 @@ const Users = () => {
                         <div className={css.userStatistics}>
                             <p>Total Orders: {userStatistics[user._id]?.total || 0}</p>
                             <ul>
-                                {userStatistics[user._id]?.statusCounts &&
-                                    Object.entries(userStatistics[user._id].statusCounts).map(([status, count], index) => (
-                                        <li key={`${user._id}-${status}-${index}`}>{status}: {count}</li>
+                                {userStatistics[user._id] &&
+                                    Object.entries(userStatistics[user._id].statusCounts).map(([status, count]) => (
+                                        <li key={status}>
+                                            {status}: {count}
+                                        </li>
                                     ))}
                             </ul>
                         </div>
                         <div className={css.userButtons}>
-                            {user.role !== 'ADMIN' && authUser?._id !== user._id && (
-                                <>
-                                    <button
-                                        onClick={() => handleActivate(user._id)}
-                                        disabled={user.isVerified}
-                                    >
-                                        Activate
-                                    </button>
-                                    <button onClick={() => handleRecoveryPassword(user._id)}>
-                                        Recover Password
-                                    </button>
-                                    <button onClick={() => handleBanUser(user._id)} disabled={user.isBanned}>
-                                        Ban
-                                    </button>
-                                    <button onClick={() => handleUnbanUser(user._id)} disabled={!user.isBanned}>
-                                        Unban
-                                    </button>
-                                </>
-                            )}
-                            {authUser?._id === user._id && user.role !== 'ADMIN' && (
-                                <button onClick={() => handleRecoveryPassword(user._id)}>
-                                    Recover Password
-                                </button>
-                            )}
+                            <button
+                                onClick={() => handleActivate(user._id)}
+                                disabled={user.isVerified}
+                            >
+                                Activate
+                            </button>
+                            <button onClick={() => handleRecoveryPassword(user._id)}>
+                                Recover Password
+                            </button>
+                            <button onClick={() => handleBanUser(user._id)} disabled={user.isBanned}>
+                                Ban
+                            </button>
+                            <button onClick={() => handleUnbanUser(user._id)} disabled={!user.isBanned}>
+                                Unban
+                            </button>
                         </div>
                     </div>
                 ))}
             </div>
-            <div className={css.pag}>
-                <button onClick={prevPage} disabled={page === 1}>«</button>
-                <p>Page {page}</p>
-                <button onClick={handleNextPage} disabled={page === totalPages}>»</button>
-            </div>
-
         </div>
     );
 };
