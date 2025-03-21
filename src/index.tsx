@@ -19,6 +19,7 @@ const AppWithAuthCheck = () => {
         if (token) {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             dispatch(authActions.loginSuccess({ user, token }));
+
         }
     }, [dispatch]);
     return <RouterProvider router={router} />;

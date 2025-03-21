@@ -1,5 +1,5 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {useNavigate, useSearchParams} from 'react-router-dom';
+import {useSearchParams} from 'react-router-dom';
 
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHook";
 import {generatePageNumbers, usePageQuery} from "../../../hook/usePageQuery";
@@ -13,7 +13,6 @@ const Orders = () => {
     const { orders, statistics, } = useAppSelector(state => state.orders);
     const { isAuthenticated } = useAppSelector((state) => state.auth);
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
     const { page, setPage, prevPage, nextPage } = usePageQuery();
     const { total, limit } = statistics;
     const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
@@ -54,15 +53,12 @@ const Orders = () => {
     });
     const pageNumbers = generatePageNumbers(page, totalPages);
     useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-            navigate('/logIn');
-        } else {
+        if (isAuthenticated) {
             const params = Object.fromEntries(searchParams.entries());
             dispatch(userActions.getAllUsers({ page: 1, limit: 1000 }));
             dispatch(orderActions.getAllOrders({
-                page: params.page || "",
-                limit: params.limit || "",
+                page: params.page || "1",
+                limit: params.limit || "20",
                 course_format: params.course_format || "",
                 course: params.course || "",
                 course_type: params.course_type || "",

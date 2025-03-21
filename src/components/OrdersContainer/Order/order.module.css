@@ -13,7 +13,7 @@
 .Order td:nth-child(10),.Order td:nth-child(11),.Order td:nth-child(12),.Order td:nth-child(13),.Order td:nth-child(14),.Order td:nth-child(15) {
     width: 7%;
     height: 30px;
-    min-width: 84.5px;
+    min-width: 87px;
     border-collapse: collapse;
     border: 1px solid purple;
     font-size: 13px;

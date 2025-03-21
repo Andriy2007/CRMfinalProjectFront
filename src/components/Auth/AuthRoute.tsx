@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import {Navigate} from 'react-router-dom';
 import {apiService} from "../../services";
 import {urls} from "../../constants/urls";
 import {authActions} from "../../store/slices";
@@ -28,7 +28,7 @@ const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     localStorage.setItem("accessToken", response.data.tokens.accessToken);
                     localStorage.setItem("refreshToken", response.data.tokens.refreshToken);
                     localStorage.setItem("user", JSON.stringify(response.data.user));
-                    dispatch(authActions.loginSuccess({ user: response.data.user }));
+                    dispatch(authActions.loginSuccess({ user: response.data.user, token: response.data.tokens.accessToken }));
                 } else {
                     throw new Error("No new accessToken received");
                 }
@@ -39,6 +39,7 @@ const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 setLoading(false);
             }
         };
+
         if (!localStorage.getItem("accessToken")) {
             refreshAccessToken();
         } else {

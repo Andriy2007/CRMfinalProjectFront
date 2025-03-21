@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {useAppDispatch, useAppSelector} from "../../hook/reduxHook";
 import {orderActions, userActions} from "../../store/slices";
 import css from './User.module.css';
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {usePageQuery} from "../../hook/usePageQuery";
 
 
@@ -12,6 +12,7 @@ const Users = () => {
     const { users } = useAppSelector(state => state.users);
     const { statistics, userStatistics } = useAppSelector(state => state.orders);
     const { page, setPage, prevPage, nextPage } = usePageQuery();
+    const [searchParams, setSearchParams] = useSearchParams();
     const { total, limit } = useAppSelector(state => state.users);
     const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
     const { isAuthenticated } = useAppSelector(state => state.auth);
@@ -22,13 +23,10 @@ const Users = () => {
     const [formData, setFormData] = useState({ name: "", surname: "", email: "",role: "Manager", });
 
     useEffect(() => {
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-            navigate('/logIn');
-        } else {
-            dispatch(userActions.getAllUsers({ page, limit: 4 }));
+        if (isAuthenticated) {
+            dispatch(userActions.getAllUsers({page, limit: 4}));
             dispatch(orderActions.getAllOrders({
-                page: '',
+                page: '1',
                 limit: '1000',
                 course_format: '',
                 course: '',
@@ -43,13 +41,7 @@ const Users = () => {
                 orderBy: '',
             }));
         }
-    }, [dispatch, page]);
-
-    useEffect(() => {
-        if (!isAuthenticated) {
-            navigate('/logIn');
-        }
-    }, [isAuthenticated, navigate]);
+    }, [isAuthenticated, searchParams, dispatch]);
 
     const handleCreate = async () => {
         try {
@@ -69,7 +61,6 @@ const Users = () => {
             }
         }
     };
-
 
     const handleCloseModal = () => {
         setIsModalOpen(false);

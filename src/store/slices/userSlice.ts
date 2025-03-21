@@ -23,6 +23,9 @@ const getAllUsers = createAsyncThunk<IUsers, { page: number, limit: number }>(
     async ({ page, limit }, thunkAPI) => {
         try {
             const token = localStorage.getItem('accessToken');
+            if (!token) {
+                throw new Error('No token found');
+            }
             const config = token ? { headers: { Authorization: `${token}` } } : {};
             const {data} = await userService.getAllUsers({ page, limit },config);
             return data;
@@ -72,7 +75,6 @@ const activateUser = createAsyncThunk(
         }
     }
 );
-
 
 const recoveryPassword = createAsyncThunk(
     "recoveryPassword",
