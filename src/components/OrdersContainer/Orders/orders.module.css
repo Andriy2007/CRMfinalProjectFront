@@ -75,12 +75,12 @@ td, th, table, tbody {
     height: 40px;
     width: 50px;
 }
-.filtersearchByName , .filtersearchBySurname , .filtersearchByEmail , .filtersearchByPhone ,.filtersearchByAge   {
+.filtersearchByName , .filtersearchBySurname , .filtersearchByEmail , .filtersearchByPhone ,.filtersearchByAge ,.filterstartDate ,.filterendDate  {
     width: 20%;
     height: 40px;
     display: flex;
 }
-.filtersearchByName input, .filtersearchBySurname input, .filtersearchByEmail input, .filtersearchByPhone input,.filtersearchByAge input  {
+.filtersearchByName input, .filtersearchBySurname input, .filtersearchByEmail input, .filtersearchByPhone input,.filtersearchByAge input ,.filterstartDate input ,.filterendDate input {
     width: 100%;
     height: 35px;
 
@@ -114,12 +114,12 @@ tr {
 .filters1 {
     display: flex;
 }
-.filters7, .filters8, .filters9, .filters10 {
+.filters7, .filters8, .filters9, .filters10, .filters12  {
     position: relative;
     display: inline-block;
 
 }
-.filters7 button, .filters8 button, .filters9 button, .filters10 button {
+.filters7 button, .filters8 button, .filters9 button, .filters10 button, .filters12 button {
     font-size: 18px;
 }
 .filters11 button {
@@ -150,12 +150,12 @@ tr {
 .dropdownContent button:hover {
     background-color: #f1f1f1;
 }
-.filters7 button, .filters8 button, .filters9 button, .filters10 button {
+.filters7 button, .filters8 button, .filters9 button, .filters10 button, .filters12 button {
     width: 100%;
     height: 100%;
     cursor: pointer;
 }
-.filters7 button:hover, .filters8 button:hover, .filters9 button:hover, .filters10 button:hover {
+.filters7 button:hover, .filters8 button:hover, .filters9 button:hover, .filters10 button:hover, .filters12 button:hover {
     background-color: #957c8e;
 }
 .filters1 input, .filters2 input, .filters3 input, .filters4 input, .filters5 input, .filters6 input, .filters11 input, .filters12 input {

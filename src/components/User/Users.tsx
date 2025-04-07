@@ -4,7 +4,7 @@ import {useAppDispatch, useAppSelector} from "../../hook/reduxHook";
 import {orderActions, userActions} from "../../store/slices";
 import css from './User.module.css';
 import {useNavigate, useSearchParams} from "react-router-dom";
-import {usePageQuery} from "../../hook/usePageQuery";
+import {generatePageNumbers, usePageQuery} from "../../hook/usePageQuery";
 
 
 
@@ -21,7 +21,7 @@ const Users = () => {
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [formData, setFormData] = useState({ name: "", surname: "", email: "",role: "Manager", });
-
+    const pageNumbers = generatePageNumbers(page, totalPages);
     useEffect(() => {
         if (isAuthenticated) {
             dispatch(userActions.getAllUsers({page, limit: 4}));
@@ -32,11 +32,14 @@ const Users = () => {
                 course: '',
                 course_type: '',
                 status: '',
+                group: '',
                 searchByName: '',
                 searchBySurname: '',
                 searchByEmail: '',
                 searchByPhone: '',
                 searchByAge: '',
+                startDate: '',
+                endDate: '',
                 order: '',
                 orderBy: '',
             }));
@@ -198,15 +201,36 @@ const Users = () => {
                 ))}
             </div>
             <div className={css.pag}>
-                <button onClick={prevPage} disabled={page === 1}>«</button>
-                <p>Page {page}</p>
-                <button onClick={handleNextPage} disabled={page === totalPages}>»</button>
+                <div className={css.pag}>
+                    <button onClick={prevPage} disabled={page === 1}>{`<<`}</button>
+                    {pageNumbers.map((pageNum, index) => (
+                        typeof pageNum === 'number' ? (
+                            <button
+                                key={index}
+                                onClick={() => setPage(pageNum)}
+                                className={pageNum === page ? css.activePage : ''}
+                            >
+                                {pageNum}
+                            </button>
+                        ) : (
+                            <button
+                                key={index}
+                                onClick={() => {
+                                }}
+                                className={css.dotsButton}
+                                disabled
+                            >
+                                {pageNum}
+                            </button>
+                        )
+                    ))}
+                    <button onClick={() => nextPage(totalPages)} disabled={page === totalPages}>{`>>`}</button>
+                </div>
             </div>
 
         </div>
     );
 };
-
 
 
 export {

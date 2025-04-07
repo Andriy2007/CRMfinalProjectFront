@@ -81,7 +81,7 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
         const updatedOrder = {
             ...formData,
             manager: currentUser?._id || formData.manager,
-            status: formData.status === null || formData.status === 'New' ? 'In Work' : formData.status,
+            status: formData.status === null || formData.status === 'New' ? 'InWork' : formData.status,
         };
 
         dispatch(orderActions.updateOrder({ _id: orderId, updatedOrder }))
@@ -153,7 +153,7 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
                     <p>status:</p>
                     <select name="status" value={formData.status || ''} onChange={handleChange}>
                         <option value="">Select status</option>
-                        <option value="InWork">In Work</option>
+                        <option value="InWork">InWork</option>
                         <option value="New">New</option>
                         <option value="Aggre">Aggre</option>
                         <option value="Disaggre">Disaggre</option>

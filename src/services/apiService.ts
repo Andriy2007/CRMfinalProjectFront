@@ -27,8 +27,7 @@ const refreshTokenRequest = async () => {
     } catch (error) {
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
-        window.location.href = "/logIn";
-        throw error;
+        throw new Error("Unauthorized");
     } finally {
         isRefreshing = false;
     }

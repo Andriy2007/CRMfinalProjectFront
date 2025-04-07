@@ -222,15 +222,19 @@ body {
 }
 .pag {
     display: flex;
+    height: 40px;
     justify-content: center;
     align-items: center;
-    margin-top: 30px;
 }
 .pag button {
-    width: 100px;
-    height: 30px;
+    height: 35px;
+    width: 45px;
+    cursor: pointer;
+    font-size: 18px;
 }
-.pag p {
-    font-size: 19px;
-    font-weight: bold
+.pag button.activePage {
+    background-color: #957c8e;
+}
+.pag button:hover {
+    background-color: #957c8e;
 }

@@ -4,9 +4,12 @@ import {useSearchParams} from 'react-router-dom';
 import {useAppDispatch, useAppSelector} from "../../../hook/reduxHook";
 import {generatePageNumbers, usePageQuery} from "../../../hook/usePageQuery";
 import {Order} from "../Order/order";
-import {orderActions, userActions} from "../../../store/slices";
+import {groupActions, orderActions, userActions} from "../../../store/slices";
 import css from "./orders.module.css";
 import {debounce} from "../../../hook/debounce";
+import {useSelector} from "react-redux";
+import {RootState} from "../../../types/reduxType";
+import {IGroup} from "../../../interfaces";
 
 
 const Orders = () => {
@@ -15,6 +18,7 @@ const Orders = () => {
     const dispatch = useAppDispatch();
     const { page, setPage, prevPage, nextPage } = usePageQuery();
     const { total, limit } = statistics;
+    const groups = useSelector((state: RootState) => state.groups.groups || []);
     const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
     const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
     const [searchParams, setSearchParams] = useSearchParams();
@@ -22,15 +26,20 @@ const Orders = () => {
     const [selectedCourseFormat, setSelectedCourseFormat] = useState(searchParams.get('course_format') || 'Toggle Course Format');
     const [selectedCourseType, setSelectedCourseType] = useState(searchParams.get('course_type') || 'Toggle Course Type');
     const [selectedStatus, setSelectedStatus] = useState(searchParams.get('status') || 'Toggle Status');
+    const [selectedGroups, setSelectedGroups] = useState(searchParams.get('groups') || 'Toggle Groups');
+    const [startDate, setStartDate] = useState(searchParams.get('startDate') || '');
+    const [endDate, setEndDate] = useState(searchParams.get('endDate') || '');
     const [sortField, setSortField] = useState(searchParams.get('orderBy') || 'age');
     const [sortOrder, setSortOrder] = useState(searchParams.get('order') || 'asc');
-    type FilterKey = 'searchByName' | 'searchBySurname' | 'searchByEmail' | 'searchByPhone' | 'searchByAge';
+    type FilterKey = 'searchByName' | 'searchBySurname' | 'searchByEmail' | 'searchByPhone' | 'searchByAge' | 'startDate' | 'endDate';
     const [localSearchValues, setLocalSearchValues] = useState<Record<FilterKey, string>>({
         searchByName: searchParams.get('searchByName') || '',
         searchBySurname: searchParams.get('searchBySurname') || '',
         searchByEmail: searchParams.get('searchByEmail') || '',
         searchByPhone: searchParams.get('searchByPhone') || '',
         searchByAge: searchParams.get('searchByAge') || '',
+        startDate: searchParams.get('startDate') || '',
+        endDate: searchParams.get('endDate') || '',
     });
     const sortableFields = [
         '_id', 'name', 'surname', 'email', 'age', 'phone',
@@ -42,7 +51,9 @@ const Orders = () => {
         { key: 'searchBySurname', label: 'Surname' },
         { key: 'searchByEmail', label: 'Email' },
         { key: 'searchByPhone', label: 'Phone' },
-        { key: 'searchByAge', label: 'Age' }
+        { key: 'searchByAge', label: 'Age' },
+        { key: 'startDate', label: 'startDate' },
+        { key: 'endDate', label: 'endDate' }
     ];
     const [dropdownState, setDropdownState] = useState({
         course: false,
@@ -50,6 +61,7 @@ const Orders = () => {
         courseType: false,
         status: false,
         course_format: false,
+        group: false,
     });
     const pageNumbers = generatePageNumbers(page, totalPages);
     useEffect(() => {
@@ -63,16 +75,24 @@ const Orders = () => {
                 course: params.course || "",
                 course_type: params.course_type || "",
                 status: params.status || "",
+                group: params.group || "",
                 searchByName: params.searchByName || "",
                 searchBySurname: params.searchBySurname || "",
                 searchByEmail: params.searchByEmail || "",
                 searchByPhone: params.searchByPhone || "",
                 searchByAge: params.searchByAge || "",
+                startDate: params.startDate || "",
+                endDate: params.endDate || "",
                 order: params.order || "",
                 orderBy: params.orderBy || ""
             }));
         }
     }, [isAuthenticated, searchParams, dispatch]);
+    useEffect(() => {
+        if (groups.length === 0) {
+            dispatch(groupActions.getGroups())
+        }
+    }, [groups, dispatch]);
     const toggleSortOrder = (field: string) => {
         const newOrder = sortOrder === 'asc' ? 'desc' : 'asc';
         setSortOrder(newOrder);
@@ -108,6 +128,11 @@ const Orders = () => {
             setSelectedStatus(value || 'Toggle Status');
             setDropdownState((prevState) => ({ ...prevState, status: false }));
         }
+        if (key === 'group') {
+            setSelectedGroups(value || 'Toggle Group');
+            setDropdownState((prevState) => ({ ...prevState, group: false }));
+        }
+
     };
     const toggleDropdown = (key: keyof typeof dropdownState) => {
         setDropdownState(prevState => ({
@@ -121,6 +146,7 @@ const Orders = () => {
         setSelectedCourseFormat('Toggle Course Format');
         setSelectedCourseType('Toggle Course Type');
         setSelectedStatus('Toggle Status');
+        setSelectedGroups('Toggle Group');
         setSortField('age');
         setSortOrder('asc');
         setLocalSearchValues({
@@ -129,6 +155,8 @@ const Orders = () => {
             searchByEmail: '',
             searchByPhone: '',
             searchByAge: '',
+            startDate: '',
+            endDate: '',
         });
     };
     const debouncedUpdateFilter = useCallback(debounce((newParams: URLSearchParams) => {
@@ -140,7 +168,7 @@ const Orders = () => {
             const updatedValues = { ...prevState, [key]: value };
             const newParams = new URLSearchParams();
             Object.keys(updatedValues).forEach(k => {
-                if (updatedValues[k as FilterKey] && updatedValues[k as FilterKey] !== 'Toggle Course' && updatedValues[k as FilterKey] !== 'Toggle Course Format' && updatedValues[k as FilterKey] !== 'Toggle Course Type' && updatedValues[k as FilterKey] !== 'Toggle Status') {
+                if (updatedValues[k as FilterKey] && updatedValues[k as FilterKey] !== 'Toggle Course' && updatedValues[k as FilterKey] !== 'Toggle Course Format' && updatedValues[k as FilterKey] !== 'Toggle Course Type' && updatedValues[k as FilterKey] !== 'Toggle Status' && updatedValues[k as FilterKey] !== 'Toggle Group') {
                     newParams.set(k as FilterKey, updatedValues[k as FilterKey]);
                 }
             });
@@ -156,10 +184,14 @@ const Orders = () => {
             if (selectedStatus && selectedStatus !== 'Toggle Status') {
                 newParams.set('status', selectedStatus);
             }
+
             debouncedUpdateFilter(newParams);
             return updatedValues;
         });
     };
+
+
+
     const handleInputChange = (key: FilterKey, value: string) => {
         updateSearchFilter(key, value);
     };
@@ -171,6 +203,7 @@ const Orders = () => {
             setExpandedOrderId(id);
         }
     };
+
 
     return (
         <div className={css.Orders}>
@@ -184,13 +217,14 @@ const Orders = () => {
                             onChange={(e) => handleInputChange(filter.key as FilterKey, e.target.value)}
                         />
                     </div>))}
+
             </div>
             <div className={css.filtersBot}>
                 <div className={css.filters7}>
                     <button onClick={() => toggleDropdown('course')}>{selectedCourse}</button>
                     {dropdownState.course && (
                         <div className={css.dropdownContent}>
-                        <button onClick={() => updateFilter('course', 'FS')}>FS</button>
+                            <button onClick={() => updateFilter('course', 'FS')}>FS</button>
                             <button onClick={() => updateFilter('course', 'QACX')}>QACX</button>
                             <button onClick={() => updateFilter('course', 'JCX')}>JCX</button>
                             <button onClick={() => updateFilter('course', 'JSCX')}>JSCX</button>
@@ -231,6 +265,19 @@ const Orders = () => {
                             <button onClick={() => updateFilter('status', 'Dubbing')}>Dubbing</button>
                             <button onClick={() => updateFilter('status', '')}>Clear Status</button>
                         </div>)}
+                </div>
+                <div className={css.filters12}>
+                    <button onClick={() => toggleDropdown('group')}>{selectedGroups || 'Toggle Groups'}</button>
+                    {dropdownState.group && (
+                        <div className={css.dropdownContent}>
+                            {groups.map((group: IGroup) => (
+                                <button key={group.name} onClick={() => updateFilter('group', group.name)}>
+                                    {group.name}
+                                </button>
+                            ))}
+                            <button onClick={() => updateFilter('group', '')}>Clear Groups</button>
+                        </div>
+                    )}
                 </div>
                 <div className={css.filters11}>
                     <button className={css.resetButton} onClick={resetFilters}>Reset Filters</button>

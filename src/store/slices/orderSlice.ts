@@ -45,11 +45,11 @@ const initialState: IState = {
     user: null,
 };
 
-const getAllOrders = createAsyncThunk<IOrders, {page: string,  limit: string, course_format:string, course:string, course_type:string, status:string,
-    searchByName:string, searchBySurname:string, searchByEmail:string, searchByPhone:string, searchByAge:string, order:string, orderBy:string }>(
+const getAllOrders = createAsyncThunk<IOrders, {page: string,  limit: string, course_format:string, course:string, course_type:string, status:string,group:string,
+    searchByName:string, searchBySurname:string, searchByEmail:string, searchByPhone:string, searchByAge:string, startDate:string, endDate:string, order:string, orderBy:string }>(
     'getAllOrders',
-    async ({page,limit,course_format, course, course_type , status,
-               searchByName, searchBySurname, searchByEmail, searchByPhone, searchByAge,
+    async ({page,limit,course_format, course, course_type , status,group,
+               searchByName, searchBySurname, searchByEmail, searchByPhone, searchByAge, startDate, endDate,
                order, orderBy}, thunkAPI) => {
         try {
             const token = localStorage.getItem('accessToken');
@@ -57,8 +57,8 @@ const getAllOrders = createAsyncThunk<IOrders, {page: string,  limit: string, co
                 throw new Error('No token found');
             }
             const config = token ? { headers: { Authorization: `${token}` } } : {};
-            const {data} = await ordersService.getAllOrders(page,limit, config,course_format, course, course_type , status,
-                searchByName, searchBySurname, searchByEmail, searchByPhone, searchByAge, order, orderBy,    );
+            const {data} = await ordersService.getAllOrders(page,limit, config,course_format, course, course_type , status, group,
+                searchByName, searchBySurname, searchByEmail, searchByPhone, searchByAge, startDate, endDate,  order, orderBy,    );
             return data;
         } catch (e) {
             const error = e as AxiosError

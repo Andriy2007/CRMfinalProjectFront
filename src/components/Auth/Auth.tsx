@@ -25,6 +25,11 @@ const Auth: React.FC<AuthProps> = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setError('Invalid email');
+            return;
+        }
         try {
             const response = await apiService.post(
                 `${urls.logIn}`,
@@ -44,6 +49,7 @@ const Auth: React.FC<AuthProps> = () => {
             console.error(err);
         }
     };
+
     return (
         <div className={css.loGiN}>
             <div className={css.box}>
@@ -59,8 +65,8 @@ const Auth: React.FC<AuthProps> = () => {
                         <input type="password" placeholder={`password`} value={password}
                                onChange={(e) => setPassword(e.target.value)} required/>
                         <div className={css.footer}>
-                            {error && <p style={{color: 'red'}}>{error}</p>}
-                            <button type="submit">Увійти</button>
+                            {error && <h3 style={{color: 'red'}}>{error}</h3>}
+                           <div> <button type="submit">Увійти</button></div>
                         </div>
                     </form>
                 </div>

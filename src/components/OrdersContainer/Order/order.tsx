@@ -34,7 +34,7 @@ const Order: FC<IProps> = ({ order, expandedOrderId, toggleExpand, index }) => {
         const updatedOrder = {
             ...order,
             manager: currentUser?._id || '',
-            status: order.status === null || order.status === 'New' ? 'In Work' : order.status,
+            status: order.status === null || order.status === 'New' ? 'InWork' : order.status,
             comment: {
                 text: comment,
                 author: currentUser?.surname || 'Unknown',
@@ -75,12 +75,8 @@ const Order: FC<IProps> = ({ order, expandedOrderId, toggleExpand, index }) => {
                     <td>{order.sum}</td>
                     <td>{order.alreadyPaid}</td>
                     <td>{order.created_at
-                        ? new Date(order.created_at).toLocaleDateString('uk-UA', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        })
-                        : ' '}
+                        ? new Date(order.created_at).toISOString().slice(0, 10)
+                        : ''}
                     </td>
                     <td>{order.group}</td>
                     <td>{getManagerName(order.manager)}</td>

@@ -46,6 +46,8 @@ form {
 .footer {
     display: flex;
     justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
 }
 .footer button {
     width: 200px;

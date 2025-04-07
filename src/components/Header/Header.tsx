@@ -21,12 +21,7 @@ const Header = () => {
                 {isAuthenticated && user && user.role === 'ADMIN' && (
                     <div className={css.adminPanel}><NavLink to={'/users'}>AdminPanel</NavLink></div>
                 )}
-                <div className={css.acc}>
-                    {isAuthenticated && user && user.role === 'Manager' && (
-                        <div className={css.adminPanel}><NavLink to={'/users'}>UserPanel</NavLink></div>
-                    )}
             <div className={css.exit}><button onClick={handleLogout}>Logout</button></div>
-                </div>
             </div>
         </div>
     );
