@@ -12,7 +12,7 @@ const recoverPassword = '/auth/send-recovery-link';
 const usersBan = '/users/ban'
 const usersUnBan = '/users/unban'
 const refreshToken = "/auth/refresh-token";
-
+const exportOrders = '/orders/export';
 
 const urls = {
     logIn,
@@ -26,7 +26,8 @@ const urls = {
     recoverPassword,
     creatPassword,
     creatNewPassword,
-    refreshToken
+    refreshToken,
+    exportOrders
 }
 export {
     baseURL,

@@ -81,7 +81,7 @@ const UpdateOrder: React.FC<UpdateOrderProps> = ({ orderId, closeModal }) => {
         const updatedOrder = {
             ...formData,
             manager: currentUser?._id || formData.manager,
-            status: formData.status === null || formData.status === 'New' ? 'InWork' : formData.status,
+            status: formData.status === null ? 'InWork' : formData.status,
         };
 
         dispatch(orderActions.updateOrder({ _id: orderId, updatedOrder }))

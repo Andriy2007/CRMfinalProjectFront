@@ -10,6 +10,7 @@ import {debounce} from "../../../hook/debounce";
 import {useSelector} from "react-redux";
 import {RootState} from "../../../types/reduxType";
 import {IGroup} from "../../../interfaces";
+import {ordersService} from "../../../services";
 
 
 const Orders = () => {
@@ -190,8 +191,6 @@ const Orders = () => {
         });
     };
 
-
-
     const handleInputChange = (key: FilterKey, value: string) => {
         updateSearchFilter(key, value);
     };
@@ -204,6 +203,26 @@ const Orders = () => {
         }
     };
 
+    const exportOrders = () => {
+        ordersService.exportOrdersToExcel(
+            searchParams.get('page') || '1',
+            searchParams.get('limit') || '20',
+            searchParams.get('course_format') || '',
+            searchParams.get('course') || '',
+            searchParams.get('course_type') || '',
+            searchParams.get('status') || '',
+            searchParams.get('group') || '',
+            searchParams.get('searchByName') || '',
+            searchParams.get('searchBySurname') || '',
+            searchParams.get('searchByEmail') || '',
+            searchParams.get('searchByPhone') || '',
+            searchParams.get('searchByAge') || '',
+            searchParams.get('startDate') || '',
+            searchParams.get('endDate') || '',
+            searchParams.get('order') || '',
+            searchParams.get('orderBy') || ''
+        );
+    };
 
     return (
         <div className={css.Orders}>
@@ -217,8 +236,11 @@ const Orders = () => {
                             onChange={(e) => handleInputChange(filter.key as FilterKey, e.target.value)}
                         />
                     </div>))}
-
+                <div className={css.excel}>
+                    <button onClick={exportOrders}>EXCEL</button>
+                </div>
             </div>
+
             <div className={css.filtersBot}>
                 <div className={css.filters7}>
                     <button onClick={() => toggleDropdown('course')}>{selectedCourse}</button>
@@ -296,7 +318,7 @@ const Orders = () => {
                                     )}
                                 </button>
                             </th>))}
-                        </tr>
+                    </tr>
                     </thead>
                 </table>
             </div>
@@ -325,7 +347,8 @@ const Orders = () => {
                         ) : (
                             <button
                                 key={index}
-                                onClick={() => {}}
+                                onClick={() => {
+                                }}
                                 className={css.dotsButton}
                                 disabled
                             >

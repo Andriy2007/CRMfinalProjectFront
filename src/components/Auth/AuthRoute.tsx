@@ -5,9 +5,14 @@ import {apiService} from "../../services";
 import {urls} from "../../constants/urls";
 import {authActions} from "../../store/slices";
 
+type AuthRouteProps = {
+    children: React.ReactNode;
+    requiredRole?: "ADMIN";
+};
 
-const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AuthRoute: React.FC<AuthRouteProps> = ({ children, requiredRole }) => {
     const isAuthenticated = useSelector((state: any) => state.auth.isAuthenticated);
+    const user = useSelector((state: any) => state.auth.user);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
 
@@ -48,6 +53,9 @@ const AuthRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     }, [dispatch]);
 
     if (loading) return <p>Перевірка авторизації...</p>;
+    if (requiredRole && user?.role !== requiredRole) {
+        return <Navigate to="/orders" replace />;
+    }
     return isAuthenticated ? <>{children}</> : <Navigate to="/logIn" />;
 };
 

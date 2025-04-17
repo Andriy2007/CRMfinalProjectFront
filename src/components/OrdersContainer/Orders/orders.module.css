@@ -71,6 +71,17 @@ td, th, table, tbody {
     margin-top: 20px;
     cursor: pointer;
 }
+.excel button {
+    height: 40px;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.excel button:hover {
+    background-color: #957c8e;
+    cursor: pointer;
+}
 .resetButton {
     height: 40px;
     width: 50px;

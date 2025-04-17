@@ -13,7 +13,7 @@ const router = createBrowserRouter([
         children: [
             { index: true, element: <Navigate to="logIn" /> },
             { path: 'orders', element: <AuthRoute><OrdersPage /></AuthRoute> },
-            { path: 'users', element:<AuthRoute> <UsersPage /></AuthRoute> },
+            { path: 'users', element: <AuthRoute requiredRole="ADMIN"><UsersPage /></AuthRoute> },
             { path: 'set-password/:token', element: <SetPasswordPage  /> },
             { path: 'logIn', element: <AuthPage /> },
         ],
